@@ -19,6 +19,7 @@ import org.apache.lucene.analysis.payloads.PayloadHelper;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.QueryVisitor;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.util.BytesRef;
 
@@ -57,7 +58,7 @@ public class PositionMatchScorer extends Scorer {
         float totalScore = 0.0f;
 
         Set<Term> terms = new HashSet<>();
-        weight.extractTerms(terms);
+        weight.getQuery().visit(QueryVisitor.termCollector(terms));
 
         for (Term term : terms) {
             totalScore += scoreTerm(doc, term);
@@ -72,7 +73,7 @@ public class PositionMatchScorer extends Scorer {
         float totalScore = 0.0f;
 
         Set<Term> terms = new HashSet<>();
-        weight.extractTerms(terms);
+        weight.getQuery().visit(QueryVisitor.termCollector(terms));
 
         for (Term term : terms) {
             Explanation termExplanation = explainTerm(docID, term);

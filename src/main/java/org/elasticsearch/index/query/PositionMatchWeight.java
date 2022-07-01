@@ -18,7 +18,9 @@ import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.QueryVisitor;
 import org.apache.lucene.search.Weight;
+
 
 import java.io.IOException;
 import java.util.Set;
@@ -29,11 +31,6 @@ public class PositionMatchWeight extends Weight {
     PositionMatchWeight(Query query, Weight weight) {
         super(query);
         this.weight = weight;
-    }
-
-    @Override
-    public void extractTerms(Set<Term> terms) {
-        weight.extractTerms(terms);
     }
 
     @Override

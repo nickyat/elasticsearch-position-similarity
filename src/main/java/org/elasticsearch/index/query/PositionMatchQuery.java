@@ -15,10 +15,7 @@
 package org.elasticsearch.index.query;
 
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apache.lucene.search.*;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -42,6 +39,11 @@ public class PositionMatchQuery extends Query {
     }
 
     @Override
+    public void visit(QueryVisitor visitor) {
+        visitor.visitLeaf(this);
+    }
+
+    @Override
     public String toString(String field) {
         return NAME + "(" + query.toString(field) + ")";
     }
@@ -52,6 +54,7 @@ public class PositionMatchQuery extends Query {
         return new PositionMatchWeight(query, weight);
     }
 
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object obj) {
         if (!sameClassAs(obj)) {
