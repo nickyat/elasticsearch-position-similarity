@@ -21,19 +21,7 @@
                 <exclude>org.elasticsearch:elasticsearch</exclude>
             </excludes>
         </dependencySet>
-<!--        <dependencySet>-->
-<!--            <outputDirectory>/</outputDirectory>-->
-<!--            <useProjectArtifact>true</useProjectArtifact>-->
-<!--            <useTransitiveFiltering>true</useTransitiveFiltering>-->
-<!--            <includes>-->
-<!--                <include>org.apache.lucene:lucene-russian</include>-->
-<!--            </includes>-->
-<!--        </dependencySet>-->
     </dependencySets>
    <fileSets>
-<!--        <fileSet>-->
-<!--            <directory>${basedir}/lib/</directory>-->
-<!--            <outputDirectory>/</outputDirectory>-->
-<!--        </fileSet>-->
     </fileSets>
 </assembly>

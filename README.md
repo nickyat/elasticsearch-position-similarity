@@ -12,7 +12,7 @@ Elasticsearch custom similarity plugin to calculate score based on term position
 
 ./gradlew clean assemble
 
-Note, that Elasticsearch 7.x requires Java 12.
+Note, that Elasticsearch 8.x requires Java 17.
 
 ## Install
 
