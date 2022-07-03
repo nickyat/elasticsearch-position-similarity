@@ -1,0 +1,12 @@
+#!/bin/bash
+# для удобства отладки плагина
+
+echo "Переустновка плагина в локальном docker"
+cp ../target/releases/elasticsearch-position-similarity-8.1.3.zip ../docker/plugins
+docker exec es8-dev  elasticsearch-plugin remove position-similarity
+docker exec es8-dev   elasticsearch-plugin install file:///plugins/elasticsearch-position-similarity-8.1.3.zip
+docker restart es8-dev
+echo "Готово! Плагин переустановлен"
+sleep 1
+
+
