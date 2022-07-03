@@ -1,3 +1,7 @@
+nick:
+Внимание!
+Это описание оригинального плагина, который требовал указать позиции слова foo|1 и получал это как payload
+
 <!--
   title: Advanced Scoring with Elasticsearch Similarity Plugins
   description: Advanced Scoring with Elasticsearch Custom Similarity Plugins

@@ -1,29 +1,47 @@
 <!--
   title: Elasticsearch term position similarity (aka boost by position) plugin
   description: Elasticsearch custom similarity plugin to calculate score based on term position and payload.
-  author: sdauletau
+  author: sdauletau https://github.com/sdauletau/elasticsearch-position-similarity
   -->
   
 # Elasticsearch term position similarity plugin
 
-Elasticsearch custom similarity plugin to calculate score based on term position and payload so that terms closer to the beginning of a field have higher scores.
+Плагин ранжирования для Elasticsearch где более высокий score получают документы, где искомая фраза находится ближе к началу предложения с учетом расположения искомых term.
+
+BM25 не полходит - нам нужно ранжировать набор документов после match: operatpor:  AND
+
+т.е. у нас и так в наборе только удовлетворяющие всем term документы, и радости от частоты слов и кол-во документов у нас нет.
+Цель: по запросу `телефон` сначала видеть документы `Телефон Iphone` и только потом `Чехол для телефона` и via versa
 
 ## Build
 
-./gradlew clean assemble
+mvn package
 
-Note, that Elasticsearch 8.x requires Java 17.
+Помним, Elasticsearch 8.x требует Java 17.
 
-## Install
+## Установка
 
-Run ./scripts/install-plugin.sh
+Для локально установленного elasticsearch ./scripts/install-plugin.sh, под капотом обычный 
+``` 
+elasticsearch-plugin install
+````
 
-Re-start elasticsearch
+После установки плагина нужен рестарт elasticsearch
 
-## Examples
+## Пример/отладка
 
-Run ./examples/position-similarity.sh
+Поиск по каталогу ./examples/position-similarity-dev-local-product.sh
 
+## Docker
+ ./docker/dev.sh
+
+Скрипт запускает локальный docker контенер с разрешенным debug. 
+
+Для выполнения установки плагина в контейнере сначала подключится IDEA Run/Attach to Process иначе не запуститься elasticsearch-plugin, т.е. ожидает коннекта к отладчику.   
+
+
+
+# Далее оригинал:
 
 # Advanced Scoring with Elasticsearch Similarity Plugins
 
