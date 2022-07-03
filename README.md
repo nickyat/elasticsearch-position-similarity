@@ -5,6 +5,12 @@
   -->
   
 # Elasticsearch term position similarity plugin
+Отличие форка: не используем payload для позиций слов в предложении, получаем готовую через getTermVector, маппинг с
+```
+...
+"term_vector": "with_positions"
+...
+```
 
 Плагин ранжирования для Elasticsearch где более высокий score получают документы, где искомая фраза находится ближе к началу предложения с учетом расположения искомых term.
 
@@ -129,12 +135,11 @@ curl --header "Content-Type:application/json" -s -XPUT "localhost:9200/test_inde
 curl --header "Content-Type:application/json" -s -XPOST "http://localhost:9200/test_index/_refresh"
 ```
 
-doc id|foo freq|doc length
-------|--------|----------
-1|1|2
-2|1|3
-3|2|4
-
+| doc id | foo freq | doc length |
+|--------|----------|------------|
+| 1      | 1        | 2          |
+| 2      | 1        | 3          |
+| 3      | 2        | 4          |
 
 ## Match Query
 
@@ -393,12 +398,11 @@ curl --header "Content-Type:application/json" -s -XPUT "localhost:9200/test_inde
 curl --header "Content-Type:application/json" -s -XPOST "http://localhost:9200/test_index/_refresh"
 ```
 
-doc id|foo freq|doc length|foo position
-------|--------|----------|------------
-1|1|2|1
-2|1|3|0
-3|2|4|2
-
+| doc id | foo freq | doc length | foo position |
+|--------|----------|------------|--------------|
+| 1      | 1        | 2          | 1            |
+| 2      | 1        | 3          | 0            |
+| 3      | 2        | 4          | 2            |
 
 ## Match Query
 
