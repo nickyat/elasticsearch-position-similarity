@@ -69,6 +69,9 @@ public class PositionMatchScorer extends Scorer {
 
     @Override
     public float getMaxScore(int upTo) throws IOException {
+        if (scorer == null) {
+            return 0;
+        }
         return scorer.getMaxScore(upTo);
     }
 
