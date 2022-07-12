@@ -179,7 +179,7 @@ public class PositionMatchScorer extends Scorer {
 
     @Override
     public int docID() {
-        return scorer.docID();
+        return scorer == null ? -1 : scorer.docID();
     }
 
     private float scoreTerm(int docID, Term term) {
