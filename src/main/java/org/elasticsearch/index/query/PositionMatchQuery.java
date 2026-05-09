@@ -14,7 +14,6 @@
  
 package org.elasticsearch.index.query;
 
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.*;
 
 import java.io.IOException;
@@ -30,12 +29,12 @@ public class PositionMatchQuery extends Query {
     }
 
     @Override
-    public Query rewrite(IndexReader reader) throws IOException {
-        Query newQ = query.rewrite(reader);
+    public Query rewrite(IndexSearcher searcher) throws IOException {
+        Query newQ = query.rewrite(searcher);
         if ((newQ != query)) {
             return new PositionMatchQuery(newQ);
         }
-        return super.rewrite(reader);
+        return super.rewrite(searcher);
     }
 
     @Override

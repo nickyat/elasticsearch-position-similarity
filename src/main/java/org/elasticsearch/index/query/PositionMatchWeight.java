@@ -18,13 +18,12 @@ import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.QueryVisitor;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.ScorerSupplier;
 import org.apache.lucene.search.Weight;
 
 
 import java.io.IOException;
-import java.util.Set;
-
 public class PositionMatchWeight extends Weight {
     final Weight weight;
 
@@ -35,12 +34,30 @@ public class PositionMatchWeight extends Weight {
 
     @Override
     public Explanation explain(LeafReaderContext context, int docID) throws IOException {
-        return scorer(context).explain(docID);
+        Scorer scorer = scorer(context);
+        if (scorer == null) {
+            return Explanation.noMatch("PositionMatchScorer: no matching scorer");
+        }
+        return ((PositionMatchScorer) scorer).explain(docID);
     }
 
     @Override
-    public PositionMatchScorer scorer(LeafReaderContext context) throws IOException {
-        return new PositionMatchScorer(this, context);
+    public ScorerSupplier scorerSupplier(LeafReaderContext context) throws IOException {
+        ScorerSupplier scorerSupplier = weight.scorerSupplier(context);
+        if (scorerSupplier == null) {
+            return null;
+        }
+        return new ScorerSupplier() {
+            @Override
+            public Scorer get(long leadCost) throws IOException {
+                return new PositionMatchScorer(PositionMatchWeight.this, context, scorerSupplier.get(leadCost));
+            }
+
+            @Override
+            public long cost() {
+                return scorerSupplier.cost();
+            }
+        };
     }
 
     @Override

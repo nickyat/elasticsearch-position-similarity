@@ -5,5 +5,6 @@
 build
 .gradle
 target
-.DS_Score
+.DS_Store
 /docker/data/
+/docker/plugins/

@@ -1,12 +1,24 @@
-#!/bin/bash
-# для удобства отладки плагина
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "Переустновка плагина в локальном docker"
-cp ../target/releases/elasticsearch-position-similarity-8.4.1.zip ../docker/plugins
-docker exec es8-dev  elasticsearch-plugin remove position-similarity
-docker exec es8-dev   elasticsearch-plugin install file:///plugins/elasticsearch-position-similarity-8.4.1.zip
-docker restart es8-dev
-echo "Готово! Плагин переустановлен"
-sleep 1
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+VERSION="$(cat "${ROOT_DIR}/VERSION.txt")"
+CONTAINER="${CONTAINER:-es9-dev}"
+PLUGIN_NAME="position-similarity"
+PLUGIN_ZIP="${ROOT_DIR}/target/releases/elasticsearch-position-similarity-${VERSION}.zip"
+DOCKER_PLUGINS_DIR="${ROOT_DIR}/docker/plugins"
 
+[ -f "${PLUGIN_ZIP}" ] || {
+    echo "Ошибка: не найден ZIP плагина: ${PLUGIN_ZIP}" >&2
+    echo "Сначала выполните: mvn clean package -Dmaven.test.skip=true" >&2
+    exit 1
+}
 
+mkdir -p "${DOCKER_PLUGINS_DIR}"
+cp "${PLUGIN_ZIP}" "${DOCKER_PLUGINS_DIR}/"
+
+echo "Переустановка плагина ${PLUGIN_NAME} в контейнере ${CONTAINER}"
+docker exec "${CONTAINER}" elasticsearch-plugin remove "${PLUGIN_NAME}" || true
+docker exec "${CONTAINER}" elasticsearch-plugin install --batch "file:///plugins/$(basename "${PLUGIN_ZIP}")"
+docker restart "${CONTAINER}" >/dev/null
+echo "Готово: плагин переустановлен"

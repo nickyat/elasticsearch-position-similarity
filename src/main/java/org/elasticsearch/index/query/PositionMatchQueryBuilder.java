@@ -15,9 +15,10 @@
 package org.elasticsearch.index.query;
 
 import org.apache.lucene.search.Query;
-import org.elasticsearch.Version;
+import org.elasticsearch.TransportVersion;
 import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.common.io.stream.StreamOutput;
+import org.elasticsearch.search.internal.MaxClauseCountQueryVisitor;
 import org.elasticsearch.xcontent.XContentBuilder;
 import org.elasticsearch.xcontent.XContentParser;
 
@@ -66,7 +67,8 @@ public class PositionMatchQueryBuilder extends AbstractQueryBuilder<PositionMatc
     }
 
     @Override
-    protected Query doToQuery(SearchExecutionContext searchExecutionContext) throws IOException {
+    protected Query doToQuery(SearchExecutionContext searchExecutionContext,
+                              MaxClauseCountQueryVisitor maxClauseCountQueryVisitor) throws IOException {
         Query query = queryBuilder.toQuery(searchExecutionContext);
         return new PositionMatchQuery(query);
     }
@@ -93,7 +95,7 @@ public class PositionMatchQueryBuilder extends AbstractQueryBuilder<PositionMatc
     }
 
     @Override
-    public Version getMinimalSupportedVersion() {
-        return Version.V_8_4_1;
+    public TransportVersion getMinimalSupportedVersion() {
+        return TransportVersion.fromString("8.13.4");
     }
 }
