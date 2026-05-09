@@ -30,12 +30,13 @@ public class PositionMatchScorer extends Scorer {
     private final int HALF_SCORE_POSITION = 5; // position where score should decrease by 50%
 
     private final LeafReaderContext context;
+    private final PositionMatchWeight weight;
     private final Scorer scorer;
 
-    PositionMatchScorer(PositionMatchWeight weight, LeafReaderContext context) throws IOException {
-        super(weight);
+    PositionMatchScorer(PositionMatchWeight weight, LeafReaderContext context, Scorer scorer) {
         this.context = context;
-        this.scorer = weight.weight.scorer(context);
+        this.weight = weight;
+        this.scorer = scorer;
     }
 
     @Override
@@ -108,7 +109,7 @@ public class PositionMatchScorer extends Scorer {
 
             for (BooleanClause clause : query.clauses()) {
                 Set<Term> subTerm = new HashSet<>();
-                clause.getQuery().visit(QueryVisitor.termCollector(subTerm));
+                clause.query().visit(QueryVisitor.termCollector(subTerm));
                 subTerm.forEach(term -> {
                     int pos = position(docID(), term);
                     if (pos >= 0 && !positions.contains(pos)) {
@@ -116,6 +117,9 @@ public class PositionMatchScorer extends Scorer {
                         sumPositionsAtomic.addAndGet(pos);
                     }
                 });
+            }
+            if (positions.isEmpty()) {
+                return 0.0f;
             }
             float sumPositions = sumPositionsAtomic.get();
             int termsCount = positions.size();
@@ -211,7 +215,7 @@ public class PositionMatchScorer extends Scorer {
      */
     private int position(int docID, Term term) {
         try {
-            Terms terms = context.reader().getTermVector(docID, term.field());
+            Terms terms = context.reader().termVectors().get(docID, term.field());
             if (terms == null) {
                 return NOT_FOUND_POSITION;
             }
